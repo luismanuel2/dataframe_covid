@@ -131,7 +131,8 @@ function datos_covid(path::String)
   cd(path)
 
   archivo=fechahoy()
-  arcivo=archivo[3:end]*"COVID19MEXICO"*".csv"
+  archivo=archivo[3:end]*"COVID19MEXICO"*".csv"
+
   if isfile("datos_abiertos_covid19.zip")
     rm("datos_abiertos_covid19.zip")
   end
