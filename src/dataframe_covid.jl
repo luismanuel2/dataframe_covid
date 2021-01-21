@@ -1,8 +1,9 @@
 module dataframe_covid
 
 export datos_covid
-using Dates
-using ZipFile, HTTP, DataFrames, CSV, StringEncodings,Statistics,XLSX
+using InfoZIP
+
+using Dates , HTTP, DataFrames, CSV, StringEncodings,Statistics,XLSX
 
 """
 esta funcion descomprime lee la direccion de un
@@ -11,10 +12,7 @@ ejemplo
 descomprimir("C:\\Users\\luism\\Documents\\datos.zip")
 """
 function descomprimir(path::String)
-  zarchive = ZipFile.Reader(path)
-  f=zarchive.files[1]
-  write(f.name,read(f,String))
-  close(zarchive)
+   InfoZIP.unzip(path, pwd())
 end
 
 #calcula el primer quantile de un vector
@@ -62,7 +60,7 @@ function ObtIDH()
   idh=idh[1:end,1:end.!=3]
   idh=idh[1:end,1:end.!=3]
   idh=convert(DataFrame,idh)
-  nam=["ENTIDAD_RES","MUNICIPIO_RES","Años_promedio_de_escolaridad","Años_esperados_de_escolarización","Ingreso_per_cápita_anual(dólares_PPC)","Tasa_de_Mortalidad_Infantil","Índice_de_educación","Índice_de_ingreso","Índice_de_salud","valor_del_IDH"]
+  nam=["ENTIDAD_RES","MUNICIPIO_RES","AME","AEE","IPCA","TMI","IE","II","Is","VIDH"]
   rename!(idh,nam)
   return idh
 end
@@ -78,24 +76,38 @@ function ObtIIM()
 end
 
 function ObtIPb()
-  x=0
+  #Busqueda y descarga del archivo
+  if !isfile("indicadores de pobreza municipal, 2015.xls")
+    data_check("https://www.coneval.org.mx/Informes/Pobreza/Datos_abiertos/pobreza_municipal/indicadores%20de%20pobreza%20municipal,%202015.csv")
+  end
+  #asignación del .csv
+  ipb=CSV.read("indicadores%20de%20pobreza%20municipal,%202015.csv",DataFrame)
+  #ciclo para asignar los valores correctos a los municipios
+  for i in 1:nrow(ipb)
+     if ipb[i,:3]>1000
+       ipb[i,:3]=ipb[i,:3]-(ipb[i,:1]*1000)
+     end
+  end
+  ipb=select(ipb,Not([:entidad_federativa,:municipio]))
+  return ipb
 end
 
 # un  DataFrame  con  el primer, segundo y tercer quartile de las edades por municipio
 function Obtquartile(date::DataFrame)
   datagroup=groupby(date,[:ENTIDAD_RES,:MUNICIPIO_RES])
   datagroup=combine(datagroup,:EDAD=>Statistics.median,:EDAD=>quantile1,:EDAD=>quantile3)
+  nam=["ENTIDAD_RES","MUNICIPIO_RES","Edad_median","Edad_quantile1","Edad_quantile3"]
+  rename!(datagroup,nam)
   return datagroup
 end
 
-function ObtTasas(args)
-  x=0
-end
 
 #devuelve un DataFrame con la proporcion de hombres y mujeres por municipio
 function ObtSexo(date::DataFrame)
   datagroup=groupby(date,[:ENTIDAD_RES,:MUNICIPIO_RES])
   datagroup=combine(datagroup,:SEXO=>prop_2,:SEXO=>prop_1)
+  nam=["ENTIDAD_RES","MUNICIPIO_RES","Sexo1","Sexo2"]
+  rename!(datagroup,nam)
   return datagroup
 end
 
@@ -103,52 +115,39 @@ end
 function ObtIndigena(date::DataFrame)
   datagroup=groupby(date,[:ENTIDAD_RES,:MUNICIPIO_RES])
   datagroup=combine(datagroup,:INDIGENA=>prop_1)
+  nam=["ENTIDAD_RES","MUNICIPIO_RES","por_indigena"]
+  rename!(datagroup,nam)
   return datagroup
 end
 
-"""sin terminar
-actualmente devuelve un DataFrame con la poblacion total por municipio
-datos del 2015"""
-function ObtExt()
-  if !isfile("estructura_00.xlsx")
-    data_check("https://www.inegi.org.mx/contenidos/masiva/indicadores/temas/estructura/estructura_00_xlsx.zip")
-    descomprimir("estructura_00_tsv.zip")
-  end
-  data_check("https://www.inegi.org.mx/app/ageeml/#")
-  pob1=XLSX.readdata("estructura_00.xlsx","valor","A2:C29641")
-  pob2=XLSX.readdata("estructura_00.xlsx","valor","AN2:AN29641")
-  pob3=XLSX.readdata("estructura_00.xlsx","valor","F2:F29641")
-  pob1=pob1[1:end,1:end.!=2]
-  pob1=convert(DataFrame,pob1)
-  pob2=convert(DataFrame,pob2)
-  pob3=convert(DataFrame,pob3)
-  pob=DataFrame(ENTIDAD_RES=pob1.x1,MUNICIPIO_RES=pob1.x2,poblacion=pob2.x1)
-  pob=pob[findall(x->(x=="Población total en viviendas particulares habitadas"),pob3.x1),:]
-  pob[!,:ENTIDAD_RES]=parse.([Int],pob[!,:ENTIDAD_RES])
-  pob[!,:MUNICIPIO_RES]=parse.([Int],pob[!,:MUNICIPIO_RES])
-  pob[!,:poblacion]=parse.([Int],pob[!,:poblacion])
-  return pob
-end
+
+
 function datos_covid(path::String)
-  cdw=pwd()
+  try
+    cdw=pwd()
+  catch
+    error("ingresa una direccion correcta")
+  end
   cd(path)
 
   archivo=fechahoy()
   arcivo=archivo[3:end]*"COVID19MEXICO"*".csv"
+  if isfile("datos_abiertos_covid19.zip")
+    rm("datos_abiertos_covid19.zip")
+  end
   if !isfile(archivo)
      data_check("http://datosabiertos.salud.gob.mx/gobmx/salud/datos_abiertos/datos_abiertos_covid19.zip")
      descomprimir("datos_abiertos_covid19.zip")
   end
 
-
-
   data=CSV.read(archivo,DataFrame)
   data=leftjoin(data,ObtIDH(),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
   data=leftjoin(data,ObtIIM(),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
+  data=leftjoin(data,ObtIPb(),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
   data=leftjoin(data,Obtquartile(data),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
   data=leftjoin(data,ObtSexo(data),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
   data=leftjoin(data,ObtIndigena(data),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
-  data=leftjoin(data,ObtExt(),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
+  cd(cwd)
   return data
 
 end
