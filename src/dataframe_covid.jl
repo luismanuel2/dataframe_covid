@@ -191,7 +191,7 @@ end
 
 
 
-function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
+function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""],wr::Bool=false)
   try
     dw=pwd()
     cd(path)
