@@ -306,7 +306,7 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
   if wr
     CSV.write("data"*fechaayer()*".csv",data)
   end
-  cd(cwd)
+  cd(dw)
   return data
 
 end
