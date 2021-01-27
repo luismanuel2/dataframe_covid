@@ -1,6 +1,6 @@
 module dataframe_covid
 
-export datos_covid
+export datos_covid,ObtIDH,ObtIIM,ObtIPb,ObtTasas,ObtExt
 using InfoZIP
 using Dates , HTTP, DataFrames, CSV, StringEncodings,Statistics,XLSX,Query
 
