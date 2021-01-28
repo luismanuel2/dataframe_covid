@@ -66,7 +66,8 @@ Esa función retorna el DataFrame de los datos de casos de personas con covid ob
 * Porcentaje de hombres y mujeres
 * Porcentaje de población indígena
 * Población total, extensión territorial y densidad de población
-Tiene como parametro oblicadorio `dir::String`,es un String con la direccon de la carpeta donde se descargaran los archivos necesarios,tiene 3 parametros opcionales:
+
+Tiene como parametro oblicadorio `dir::String`,es un String con la direccon de la carpeta donde se descargaran los archivos necesarios,tiene 4 parametros opcionales:
 * `wr::Bool`-> toma un valor booleano, si es verdadero guarda los datos en un archivo csv, es false por default
 * `clave_e::Array{Int}`->toma como entrada un vetor Int con las clave de los estados deseados
 * `clave_m::Array{Int}`->Toma como entrada un vetor Int con las clave de los estados deseados
@@ -84,4 +85,4 @@ Tiene como parametro oblicadorio `dir::String`,es un String con la direccon de l
    * `datos_covid("C:/Users/luism/github/dataframe_covid/sro",wr=true)`-> obtiene todos los datos
    * `datos_covid("C:/Users/luism/github/dataframe_covid/sro",subc=["IDH"])`  En este ejemplo solo se agregan los datos del IDH
    * `datos_covid("C:/Users/luism/github/dataframe_covid/sro",clave_e=[1],clave_m=[2],col=["pob","IIM"])`
-*NOTA: _subc_ y _col_ no pueden usarse al mismo tiempo*
+**NOTA: _subc_ y _col_ no pueden usarse al mismo tiempo**
