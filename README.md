@@ -67,7 +67,7 @@ Esa función retorna el DataFrame de los datos de casos de personas con covid ob
 * Porcentaje de población indígena
 * Población total, extensión territorial y densidad de población
 
-Tiene como parametro oblicadorio `dir::String`,es un String con la direccon de la carpeta donde se descargaran los archivos necesarios,tiene 4 parametros opcionales:
+Tiene como parametro oblicadorio `dir::String`,es un String con la direccon de la carpeta donde se descargaran los archivos necesarios,tiene 5 parametros opcionales:
 * `wr::Bool`-> toma un valor booleano, si es verdadero guarda los datos en un archivo csv, es false por default
 * `clave_e::Array{Int}`->toma como entrada un vetor Int con las clave de los estados deseados
 * `clave_m::Array{Int}`->Toma como entrada un vetor Int con las clave de los estados deseados
