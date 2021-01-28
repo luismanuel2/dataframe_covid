@@ -51,7 +51,7 @@ function fechaayer()::String
 end
 
 #hace las pruenas necesarias y devuelve un subconjunto de datos con las columnas y filas espeficicadas
-function sub(dat::DataFrame,clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function sub(dat::DataFrame,clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   nam=names(dat)
   #selecciona las columnas necesarias
   if col!=[""]
@@ -89,7 +89,7 @@ function sub(dat::DataFrame,clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],
 end
 
 #devuele un DataFrame  con el IDH por municipio
-function ObtIDH(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function ObtIDH(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   if !isfile("IDH 10 NM sitioweb.xlsx")
     data_check("https://www.mx.undp.org/content/dam/mexico/docs/Publicaciones/PublicacionesReduccionPobreza/InformesDesarrolloHumano/UNDP-MX-IDH-Municipal-basedatos.zip")
     descomprimir("UNDP-MX-IDH-Municipal-basedatos.zip")
@@ -105,7 +105,7 @@ function ObtIDH(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{
 end
 
 #devuelve un Dataframe con el indice de intensidad migratoria por Municipio
-function ObtIIM(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function ObtIIM(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   if !isfile("IIM2010_BASEMUN.csv")
     data_check("https://raw.githubusercontent.com/luismanuel2/dataframe_covid/main/datos/IIM2010_BASEMUN.csv")
   end
@@ -114,7 +114,7 @@ function ObtIIM(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{
   return sub(iim,clave_e,clave_m,col)
 end
 
-function ObtIPb(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function ObtIPb(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   #Busqueda y descarga del archivo
   if !isfile("indicadores de pobreza municipal, 2015.xls")
     data_check("https://www.coneval.org.mx/Informes/Pobreza/Datos_abiertos/pobreza_municipal/indicadores%20de%20pobreza%20municipal,%202015.csv")
@@ -147,14 +147,14 @@ function ObtIPb(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{
 end
 
 # un  DataFrame  con  el primer, segundo y tercer quartile de las edades por municipio
-function Obtquartile(date::DataFrame;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function Obtquartile(date::DataFrame;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   datagroup=groupby(date,[:ENTIDAD_RES,:MUNICIPIO_RES])
   datagroup=combine(datagroup,:EDAD=>Statistics.median,:EDAD=>quantile1,:EDAD=>quantile3)
   return sub(datagroup,clave_e,clave_m,col)
 end
 
 #regresa los datos de tasas de natalidad y fecundidad
-function ObtTasas(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function ObtTasas(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   if !isfile("tasas.csv")
     data_check("https://raw.githubusercontent.com/luismanuel2/dataframe_covid/main/datos/tasas.csv")
   end
@@ -163,7 +163,7 @@ function ObtTasas(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Arra
 end
 
 #devuelve un DataFrame con la proporcion de hombres y mujeres por municipio
-function ObtSexo(date::DataFrame;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function ObtSexo(date::DataFrame;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   datagroup=groupby(date,[:ENTIDAD_RES,:MUNICIPIO_RES])
   datagroup=combine(datagroup,:SEXO=>prop_2,:SEXO=>prop_1)
   nam=["ENTIDAD_RES","MUNICIPIO_RES","SEXO_2","SEXO_1"]
@@ -172,7 +172,7 @@ function ObtSexo(date::DataFrame;clave_e::Array{Int32}=[0],clave_m::Array{Int32}
 end
 
 #devuelve un DataFrame con la proporcion de pobacion indigen
-function ObtIndigena(date::DataFrame;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""])
+function ObtIndigena(date::DataFrame;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""])
   datagroup=groupby(date,[:ENTIDAD_RES,:MUNICIPIO_RES])
   datagroup=combine(datagroup,:INDIGENA=>prop_1)
   nam=["ENTIDAD_RES","MUNICIPIO_RES","POR_INDIGENA"]
@@ -181,7 +181,7 @@ function ObtIndigena(date::DataFrame;clave_e::Array{Int32}=[0],clave_m::Array{In
 end
 
 # devuelve los datos de poblacion y extencion territorial
-function ObtExt(;clave_e::Array{Int32}=[0],clave_m::Array{Int32}=[0],col::Array{String}=[""],wr::Bool=false)
+function ObtExt(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""],wr::Bool=false)
     if !isfile("Poblaci%C3%B3n.csv")
       data_check("https://raw.githubusercontent.com/luismanuel2/dataframe_covid/main/datos/Poblaci%C3%B3n.csv")
     end
@@ -192,11 +192,11 @@ end
 
 
 function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""],wr::Bool=false)
+  dw=pwd()
   try
-    dw=pwd()
-    cd(path)
+    cd(dir)
   catch
-    cd(cwd)
+    cd(dw)
     error("ingresa una direccion correcta")
   end
 
@@ -261,7 +261,6 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
     end
   end
   else
-    println("pri")
     eidh=eiim=eipb=equar=etas=ese=ein=edat=epob=[""]
   end
 
@@ -278,9 +277,7 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
 
 
   if subc==[""]
-    subc=["IDH","IIM","IP","EDAD","NFM","GEN","IND","POB","UBI"]
-    println("se")
-
+    subc=["IDH","IIM","IP","EDAD","NAT","GEN","IND","POB","UBI"]
   end
   for i in subc
     if i=="IDH" && eidh!=[]
@@ -299,8 +296,6 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
       data=leftjoin(data,ObtIndigena(data1,clave_e=clave_e,clave_m=clave_m,col=ein),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
     elseif i=="POB" && epob!=[]
       data=leftjoin(data,ObtExt(clave_e=clave_e,clave_m=clave_m,col=epob),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
-    elseif i=="UBI" && eidh!=[]
-      println("UBI")
     end
   end
   if wr
