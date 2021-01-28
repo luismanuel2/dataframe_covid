@@ -218,12 +218,12 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
 
   nidh=["AME","AEE","IPCA","TMI","IE","II","IS","VIDH"]
   niim=["IIM","GIM"]
-  nipb=["clave_entidad", "clave_municipio", "poblacion", "pobreza", "pobreza_pob", "pobreza_e", "pobreza_e_pob", "pobreza_m", "pobreza_m_pob", "vul_car", "vul_car_pob", "vul_ing", "vul_ing_pob", "npnv", "npnv_pob", "ic_rezedu", "ic_rezedu_pob", "ic_asalud","ic_asalud_pob","ic_segsoc","ic_segsoc_pob", "ic_cv", "ic_cv_pob", "ic_sbv", "ic_sbv_pob", "ic_ali", "ic_ali_pob", "carencias", "carencias_pob", "carencias3", "carencias3_pob", "plb", "plb_pob", "plbm", "plbm_pob"]
+  nipb=["pobreza", "pobreza_pob", "pobreza_e", "pobreza_e_pob", "pobreza_m", "pobreza_m_pob", "vul_car", "vul_car_pob", "vul_ing", "vul_ing_pob", "npnv", "npnv_pob", "ic_rezedu", "ic_rezedu_pob", "ic_asalud","ic_asalud_pob","ic_segsoc","ic_segsoc_pob", "ic_cv", "ic_cv_pob", "ic_sbv", "ic_sbv_pob", "ic_ali", "ic_ali_pob", "carencias", "carencias_pob", "carencias3", "carencias3_pob", "plb", "plb_pob", "plbm", "plbm_pob"]
   ntas=["naci_19", "tasa_nat", "muer_19", "tasa_mor"]
   nquar=["EDAD_median","EDAD_quantile1","EDAD_quantile3"]
   nse=["SEXO_1","SEXO_2"]
   nin=["POR_INDIGENA"]
-  npob=["ENTIDAD_RES", "MUNICIPIO_RES", "area", "pob", "pob_h", "pob_m", "densidad"]
+  npob=["area", "pob", "pob_h", "pob_m", "densidad"]
   ndat=names(data)
 
   eidh=Vector{String}()
