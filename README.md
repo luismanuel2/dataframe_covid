@@ -48,13 +48,25 @@ Esta función retorna un DataFrame con las Tasas de natalidad, fecundidad y mort
 
 ## ObtExt()
 Esta función retorna un DataFrame de la Población total, extensión territorial y densidad de población,tiene 3 parametros opcionales:
+   * `clave_e::Array{Int}`->toma como entrada un vetor Int con las clave de los estados deseados
+   * `clave_m::Array{Int}`->Toma como entrada un vetor Int con las clave de los estados deseados
+   * `col::Array{String}`->Toma como parametro de entrada un vector String con los nombres de las columnas deseadas  
+   * ejemplo
+      * `ObtExt()`-> obtiene todos los datos
+      * `ObtExt(clave_e=[30,20],clave_m=[1,2],col=["area"])`
+      * `ObtExt(clave_m=[1,2,3,4,5])`
+      
+## ObtUbi()
+Esta función retorna un DataFrame de datos sobre la ubicacion de cada municipal, se obtuvieron datos de la ubicacion de cada colonia y luego se escogio la que tenia mayor población para representar sus datos como si fueran los de el municipio, tiene 3 parametros opcionales:
 * `clave_e::Array{Int}`->toma como entrada un vetor Int con las clave de los estados deseados
 * `clave_m::Array{Int}`->Toma como entrada un vetor Int con las clave de los estados deseados
 * `col::Array{String}`->Toma como parametro de entrada un vector String con los nombres de las columnas deseadas  
 * ejemplo
-   * `ObtExt()`-> obtiene todos los datos
-   * `ObtExt(clave_e=[30,20],clave_m=[1,2],col=["area"])`
-   * `ObtExt(clave_m=[1,2,3,4,5])`
+   * `ObtUbi()`-> obtiene todos los datos
+   * `ObtUbi(clave_e=[30,20],clave_m=[1,2],col=["codigo_Postal"])`
+   * `ObtUbi(clave_m=[1,2,3,4,5])`
+
+
 
 ## datos_covid()
 Esa función retorna el DataFrame de los datos de casos de personas con covid obtenidos en coronavirus.gob junto con los datos por municipio  de
@@ -81,6 +93,7 @@ Tiene como parametro oblicadorio `dir::String`,es un String con la direccon de l
    * "GEN"->proporcion de hombres y mujeres
    * "IND"->proporcion de indigenas
    * "POB"->datos de poblacion y territorio
+   * "UBI"->datos de ubicacion
 * ejemplo
    * `datos_covid("C:/Users/luism/github/dataframe_covid/sro",wr=true)`-> obtiene todos los datos
    * `datos_covid("C:/Users/luism/github/dataframe_covid/sro",subc=["IDH"])`  En este ejemplo solo se agregan los datos del IDH

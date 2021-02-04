@@ -188,6 +188,13 @@ function ObtExt(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{Stri
     pob=CSV.read("Poblaci%C3%B3n.csv",DataFrame)
     return sub(pob,clave_e,clave_m,col)
 end
+function ObtUbi(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""],wr::Bool=false)
+    if !isfile("ubicacion.csv")
+      data_check("https://raw.githubusercontent.com/luismanuel2/dataframe_covid/main/datos/ubicacion.csv")
+    end
+    pob=CSV.read("ubicacion.csv",DataFrame)
+    return sub(pob,clave_e,clave_m,col)
+end
 
 
 
@@ -225,6 +232,7 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
   nin=["POR_INDIGENA"]
   npob=["area", "pob", "pob_h", "pob_m", "densidad"]
   ndat=names(data)
+  nubi=["codigo_Postal","coordenada_lateral","coordenada_longitudinal","altitud"]
 
   eidh=Vector{String}()
   eiim=Vector{String}()
@@ -235,6 +243,7 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
   ein=Vector{String}()
   edat=Vector{String}()
   epob=Vector{String}()
+  eubi=Vector{String}()
 
   if col!=[""]
   for i in col
@@ -256,12 +265,14 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
       push!(edat,i)
     elseif i in npob
       push!(epob,i)
+    elseif i in nubi
+      push!(eubi,i)
     else
       println("No se encontro columna $i")
     end
   end
   else
-    eidh=eiim=eipb=equar=etas=ese=ein=edat=epob=[""]
+    eidh=eiim=eipb=equar=etas=ese=ein=edat=epob=eubi=[""]
   end
 
   if clave_e!=[0] || clave_m!=[0] || col!=[""]
@@ -296,6 +307,8 @@ function datos_covid(dir::String;subc::Array{String}=[""],clave_e::Array{Int}=[0
       data=leftjoin(data,ObtIndigena(data1,clave_e=clave_e,clave_m=clave_m,col=ein),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
     elseif i=="POB" && epob!=[]
       data=leftjoin(data,ObtExt(clave_e=clave_e,clave_m=clave_m,col=epob),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
+    elseif i=="POB" && epob!=[]
+      data=leftjoin(data,ObtUbi(clave_e=clave_e,clave_m=clave_m,col=eubi),on=[:ENTIDAD_RES,:MUNICIPIO_RES])
     end
   end
   if wr
