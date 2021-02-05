@@ -1,6 +1,6 @@
 module dataframe_covid
 
-export datos_covid,ObtIDH,ObtIIM,ObtIPb,ObtTasas,ObtExt
+export datos_covid,ObtIDH,ObtIIM,ObtIPb,ObtTasas,ObtExt,ObtUbi
 using InfoZIP
 using Dates , HTTP, DataFrames, CSV, StringEncodings,Statistics,XLSX,Query
 
@@ -188,6 +188,7 @@ function ObtExt(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{Stri
     pob=CSV.read("Poblaci%C3%B3n.csv",DataFrame)
     return sub(pob,clave_e,clave_m,col)
 end
+
 function ObtUbi(;clave_e::Array{Int}=[0],clave_m::Array{Int}=[0],col::Array{String}=[""],wr::Bool=false)
     if !isfile("ubicacion.csv")
       data_check("https://raw.githubusercontent.com/luismanuel2/dataframe_covid/main/datos/ubicacion.csv")
